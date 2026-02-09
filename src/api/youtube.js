@@ -1,28 +1,78 @@
 import axios from 'axios';
+import { API_CONFIG } from './config';
 
-const API_KEY = 'AIzaSyB81QoYE-URbEIZxXtWc4GE3u7bHk2vLKQ';
-const BASE_URL = 'https://www.googleapis.com/youtube/v3';
+const youtubeApi = axios.create({
+    baseURL: API_CONFIG.BASE_URL,
+    params: {
+        ...API_CONFIG.DEFAULT_PARAMS,
+        key: API_CONFIG.API_KEY,
+    },
+});
 
 export const searchVideos = async (searchTerm) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/search`, {
-      params: {
-        part: 'snippet',
-        maxResults: 10,
-        key: API_KEY,
-        q: searchTerm,
-        type: 'video'
-      }
-    });
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching videos:', error);
-    return { items: [] };
-  }
+    try {
+        const response = await youtubeApi.get('/search', {
+            params: {
+                q: searchTerm,
+                type: 'video'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching videos:', error);
+        return { items: [] };
+    }
 };
 
 export const getRandomVideos = async () => {
-  const popularTerms = ['music', 'news', 'gaming', 'sports', 'education'];
-  const randomTerm = popularTerms[Math.floor(Math.random() * popularTerms.length)];
-  return searchVideos(randomTerm);
+    const popularTerms = ['music', 'news', 'gaming', 'sports', 'education'];
+    const randomTerm = popularTerms[Math.floor(Math.random() * popularTerms.length)];
+    return searchVideos(randomTerm);
 };
+
+export const getVideoDetails = async (videoId) => {
+    try {
+        const response = await youtubeApi.get('/videos', {
+            params: {
+                id: videoId,
+                part: 'snippet,statistics'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching video details:', error);
+        return null;
+    }
+};
+
+export const getChannelDetails = async (channelId) => {
+    try {
+        const response = await youtubeApi.get('/channels', {
+            params: {
+                id: channelId,
+                part: 'snippet,statistics'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching channel details:', error);
+        return null;
+    }
+};
+
+export const getRelatedVideos = async (videoId) => {
+    try {
+        const response = await youtubeApi.get('/search', {
+            params: {
+                relatedToVideoId: videoId,
+                type: 'video',
+                maxResults: 10
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching related videos:', error);
+        return { items: [] };
+    }
+};
+
