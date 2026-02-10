@@ -60,13 +60,23 @@ export const getChannelDetails = async (channelId) => {
     }
 };
 
-export const getRelatedVideos = async (videoId) => {
+export const getRelatedVideos = async (videoTitle, channelTitle) => {
     try {
+        // Kinyerünk kulcsszavakat a címből
+        const keywords = videoTitle
+            .replace(/[^\w\s]/g, '') // Műveleti karakterek eltávolítása
+            .split(' ')
+            .filter(word => word.length > 3) // Rövid szavak szűrése
+            .slice(0, 3) // Első 3 kulcsszó
+            .join(' ');
+        
+        const searchQuery = keywords || channelTitle;
+        
         const response = await youtubeApi.get('/search', {
             params: {
-                relatedToVideoId: videoId,
+                q: searchQuery,
                 type: 'video',
-                maxResults: 10
+                maxResults: 15
             }
         });
         return response.data;

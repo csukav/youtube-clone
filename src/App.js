@@ -21,7 +21,7 @@ function App() {
 
   useEffect(() => {
     if (selectedVideo) {
-      loadRelatedVideos(selectedVideo.id.videoId);
+      loadRelatedVideos(selectedVideo);
     }
   }, [selectedVideo]);
 
@@ -71,10 +71,16 @@ function App() {
     }
   };
 
-  const loadRelatedVideos = async (videoId) => {
+  const loadRelatedVideos = async (video) => {
     try {
-      const response = await getRelatedVideos(videoId);
-      setRelatedVideos(response.items);
+      const videoTitle = video.snippet.title;
+      const channelTitle = video.snippet.channelTitle;
+      const response = await getRelatedVideos(videoTitle, channelTitle);
+      // Kiszűrjük az aktuálisan lejátszott videót
+      const filtered = response.items.filter(
+        item => item.id.videoId !== video.id.videoId
+      );
+      setRelatedVideos(filtered);
     } catch (err) {
       console.error('Hiba történt a kapcsolódó videók betöltése során:', err);
     }
