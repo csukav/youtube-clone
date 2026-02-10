@@ -95,14 +95,17 @@ function App() {
             )
           )}
           
-          {loading ? (
-            <VideoSkeleton count={6} />
-          ) : (
-            <VideoList 
-              videos={selectedVideo ? relatedVideos : videos} 
-              onVideoSelect={handleVideoSelect}
-            />
-          )}
+          <div className="video-list-container">
+            {selectedVideo && <h2 className="related-videos-title">Kapcsolódó videók</h2>}
+            {loading ? (
+              <VideoSkeleton count={6} />
+            ) : (
+              <VideoList 
+                videos={selectedVideo ? relatedVideos : videos} 
+                onVideoSelect={handleVideoSelect}
+              />
+            )}
+          </div>
         </div>
       </div>
     </AuthProvider>
