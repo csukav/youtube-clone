@@ -12,7 +12,8 @@ function VideoItem({ video, onVideoSelect }) {
       />
       <div className="video-item__info">
         <h3>{video.snippet.title}</h3>
-        <p>{video.snippet.channelTitle}</p>
+        <p className="channel-name">{video.snippet.channelTitle}</p>
+        <p className="description">{video.snippet.description}</p>
       </div>
     </div>
   );
